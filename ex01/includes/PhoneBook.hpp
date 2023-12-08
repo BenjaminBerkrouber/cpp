@@ -9,13 +9,24 @@ class PhoneBook
     private:
         Contact contact[8];
         int     index;
+        int     contact_count;
 
     public:
+        // constructors
         PhoneBook();
-        void    add_contact(Contact contact);
-        void    print_contact(Contact contact);
-        Contact search_contact();
-        void    clean_PhoneBook();
+
+        // destructors
+        ~PhoneBook();
+
+        // getters
+        Contact get_contact(int index);
+
+        // setters
+        void    set_contact(Contact contact);
+        
+        // methods
+        void    print_contact(Contact contact, int index);
+        void search_contact();
 };
 
 #endif

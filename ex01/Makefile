@@ -2,7 +2,7 @@ NAME = Phonebook
 CC = g++
 CFLAGS = -g -Wall -Wextra -Werror
 SRC = main.cpp srcs/Contact.cpp srcs/PhoneBook.cpp
-INC = Contact.hpp PhoneBook.hpp
+INC = Contact.hpp PhoneBook.hpp utils.h
 OBJ_DIR = obj/
 OBJ = $(addprefix $(OBJ_DIR), $(SRC:.cpp=.o))
 INCLUDES_DIR = includes/

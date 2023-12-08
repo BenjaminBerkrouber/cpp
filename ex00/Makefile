@@ -2,8 +2,11 @@ NAME = megaphone
 CC = g++
 CFLAGS = -g -Wall -Wextra -Werror
 SRC = srcs/megaphone.cpp
+INC = 
 OBJ_DIR = obj/
 OBJ = $(addprefix $(OBJ_DIR), $(SRC:.cpp=.o))
+INCLUDES_DIR = includes/
+DEPS = $(addprefix $(INCLUDES_DIR), $(INC))
 
 RED=\033[0;31m
 GREEN=\033[0;32m
@@ -24,18 +27,20 @@ start:
 	@echo "$(NC)"
 	@sleep 1
 
-$(NAME): $(OBJ)
+$(NAME): compilat $(OBJ)
 	@echo "$(BLUE)----------Creating the executable----------$(NC)"
 	@echo " $(NAME)"
 	@$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
 	@sleep 1
 
-$(OBJ_DIR)%.o: %.cpp
+compilat:
 	@echo "$(BLUE)----------Compiling----------$(NC)"
+
+
+$(OBJ_DIR)%.o: %.cpp $(DEPS)
 	@echo " $<"
-	@mkdir -p $(OBJ_DIR)
-	@$(CC) $(CFLAGS) -c $< -o $@
-	@sleep 1
+	@mkdir -p $(dir $@)
+	@$(CC) $(CFLAGS) -I$(INCLUDES_DIR) -c $< -o $@
 
 end:
 	@echo "$(GREEN)----------Successfully compiled!----------$(NC)"
