@@ -1,0 +1,58 @@
+NAME = megaphone
+CC = g++
+CFLAGS = -g -Wall -Wextra -Werror
+SRC = srcs/megaphone.cpp
+OBJ_DIR = obj/
+OBJ = $(addprefix $(OBJ_DIR), $(SRC:.cpp=.o))
+
+RED=\033[0;31m
+GREEN=\033[0;32m
+BLUE=\033[0;34m
+NC=\033[0m # No Color
+
+all: start $(NAME) end
+
+start:
+	@echo " "
+	@echo "$(GREEN)----------Starting the compilation of $(NAME)----------$(NC)"
+	@echo "$(BLUE)"
+	@echo "  ____  ____  ____         ___   ___  "
+	@echo " / ___||  _ \|  _ \       / _ \ / _ \ "
+	@echo "| |    | |_) | | | |  == | | | | | | |"
+	@echo "| |___ |  __/| |_| |  == | |_| | |_| |"
+	@echo " \____||_|   |____/       \___/ \___/ "
+	@echo "$(NC)"
+	@sleep 1
+
+$(NAME): $(OBJ)
+	@echo "$(BLUE)----------Creating the executable----------$(NC)"
+	@echo " $(NAME)"
+	@$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
+	@sleep 1
+
+$(OBJ_DIR)%.o: %.cpp
+	@echo "$(BLUE)----------Compiling----------$(NC)"
+	@echo " $<"
+	@mkdir -p $(OBJ_DIR)
+	@$(CC) $(CFLAGS) -c $< -o $@
+	@sleep 1
+
+end:
+	@echo "$(GREEN)----------Successfully compiled!----------$(NC)"
+	@echo " "
+
+clean:
+	@echo "$(RED)----------Cleaning up files----------$(NC)"
+	@echo " $(OBJ_DIR)"
+	@echo " "
+	@rm -rf $(OBJ_DIR)
+	@sleep 1
+
+fclean: clean
+	@echo "$(RED)----------Full cleanup...----------$(NC)"
+	@echo " "
+	@rm -rf $(NAME) a.out
+
+re: fclean all
+
+.PHONY: all clean fclean re start end
