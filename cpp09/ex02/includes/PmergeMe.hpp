@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PmergeMe.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ben <ben@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: bberkrou <bberkrou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 01:43:40 by ben               #+#    #+#             */
-/*   Updated: 2024/06/04 23:03:55 by ben              ###   ########.fr       */
+/*   Updated: 2024/06/25 20:47:21 by bberkrou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@
 #include <map>
 #include <fstream>
 #include <climits>
+#include <utility>
 
 class PmergeMe
 {
@@ -51,9 +52,33 @@ class PmergeMe
         ~PmergeMe();
 
         // Methods
-        
-    private :
+		void	sort(const std::string &str);
 
+    private :
+        std::string _str;
+		int		_nb;
+        std::vector<std::pair<int, int> > _pairs;
+		std::vector<int> _sorted_number;
+		int		_size_min_vector;
+
+        bool	parsInput(const std::string &str);
+		bool	containsOnlyDigits(const std::string &str);
+        
+        void	makePair();
+		void	printPairs();
+		
+		void	findMaxOfPairs();
+		void	printNumbers();
+		
+		void	sortMaxOfPairs();
+		void	recursiveSort(std::vector<int> &arr, int left, int right);
+		int		partition(std::vector<int> &arr, int left, int right);
+		
+		void	findMinOfPairs();
+
+		void	insertMin();
+		void	generateJacobsthalSeq(std::vector<size_t> &seq, size_t size);
+		void	insertInSortedOrder(int value);
 };
 
 #endif

@@ -55,8 +55,8 @@ std::string reformatValue(const std::string &value) {
     len = value.find('.');
     if (len == std::string::npos)
         len = value.length();
-    else
-        len = len;
+    // else
+    //     len = len;
 
     if (value.find('.') != std::string::npos) {
         for (size_t i = value.find('.') + 1; i < value.length(); i++) {
