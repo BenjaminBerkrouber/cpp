@@ -5,6 +5,10 @@
 // ================== CONSTRUCTORS ================== //
 
 PmergeMe::PmergeMe() {
+    _nb = -1;
+    _size_min_vector = 0;
+    _time_vector = 0;
+    _time_deque = 0;
 }
 
 PmergeMe::PmergeMe(const PmergeMe &other) {
@@ -28,6 +32,7 @@ PmergeMe::~PmergeMe() {
 // ================================================================================= //
 
 // ================= Parting part ================= //
+
 bool PmergeMe::containsOnlyDigits(const std::string &str) {
     for (size_t i = 0; i < str.size(); i++) {
         if (!isdigit(str[i]) && str[i] != ' ')
@@ -84,6 +89,7 @@ void PmergeMe::findMaxOfPairs() {
 void PmergeMe::sortMaxOfPairs() {
     if (!_sorted_number.empty()) {
         recursiveSort(_sorted_number, 0, _sorted_number.size() - 1);
+        std::sort(_sorted_number.begin(), _sorted_number.end());
     }
 }
 
@@ -109,59 +115,37 @@ int PmergeMe::partition(std::vector<int> &arr, int left, int right) {
     return i + 1;
 }
 
-// ================= Insert First Min ================= //
-
-void PmergeMe::findMinOfPairs() {
-    if (_sorted_number.empty()) return;
-
-    int min_element = _sorted_number[0];
-
-    for (std::vector<std::pair<int, int> >::iterator it = _pairs.begin(); it != _pairs.end(); ++it) {
-        if (it->first == min_element) {
-            _sorted_number.insert(_sorted_number.begin(), it->second);
-            _pairs.erase(it);
-            return;
-        } else if (it->second == min_element) {
-            _sorted_number.insert(_sorted_number.begin(), it->first);
-            _pairs.erase(it);
-            return;
-        }
-    }
-}
-
 // ================= Insert Min part ================= //
 
 void PmergeMe::insertMin() {
     std::vector<size_t> jacobsthal_seq;
     _size_min_vector = 2;
 
-	printPairs();
     generateJacobsthalSeq(jacobsthal_seq, _pairs.size());
-    while (!_pairs.empty()) {
-        if (static_cast<size_t>(_size_min_vector) < jacobsthal_seq.size() && static_cast<size_t>(_size_min_vector) == jacobsthal_seq[_size_min_vector]) {
-            insertInSortedOrder(_pairs[0].first);
-            _pairs.erase(_pairs.begin());
-        } else {
-            insertInSortedOrder(_pairs[0].second);
-            _pairs.erase(_pairs.begin());
-        }
+
+    size_t jacobsthal_index = 0;
+    std::vector<std::pair<int, int> >::iterator it = _pairs.begin();
+    while (it != _pairs.end() && jacobsthal_index < jacobsthal_seq.size()) {
+        int min_value = std::min(it->first, it->second);
+        insertInSortedOrder(min_value);
+        ++jacobsthal_index;
+        it = _pairs.erase(it);
+    }
+    if (_pairs.size() > 0) {
+        insertMin();
     }
 }
 
-void	PmergeMe::insertInSortedOrder(int value) {
-	if (_sorted_number.empty()) {
-		_sorted_number.push_back(value);
-		return;
-	}
 
-	for (std::vector<int>::iterator it = _sorted_number.begin(); it != _sorted_number.end(); ++it) {
-		if (value < *it) {
-			_sorted_number.insert(it, value);
-			return;
-		}
-	}
-	_sorted_number.push_back(value);
+
+void PmergeMe::insertInSortedOrder(int value) {
+    std::vector<int>::iterator it = _sorted_number.begin();
+    while (it != _sorted_number.end() && *it < value) {
+        ++it;
+    }
+    _sorted_number.insert(it, value);
 }
+
 
 void PmergeMe::generateJacobsthalSeq(std::vector<size_t> &seq, size_t size) {
     seq.push_back(0);
@@ -177,52 +161,76 @@ void PmergeMe::generateJacobsthalSeq(std::vector<size_t> &seq, size_t size) {
 
 // ================= sort manager ================= //
 
-void PmergeMe::sort(const std::string &str) {
+void PmergeMe::sortWithVector(const std::string &str) {
+    clock_t startTime = clock();
     if (!parsInput(str))
         return;
-
-    std::cout << "Input:" << std::endl;
-    std::cout << "  " << _str << std::endl << std::endl;
-        
-    std::cout << "Pairs:" << std::endl;
     makePair();
-    printPairs();
-
-    std::cout << "Max insert:" << std::endl;
     findMaxOfPairs();
-    printNumbers();
-    
-    std::cout << "Sorted max insert:" << std::endl;
     sortMaxOfPairs();
-    printNumbers();
-
-    std::cout << "findMinOfPairs Min insert:" << std::endl;
-    findMinOfPairs();
-    printNumbers();
-
-    std::cout << "Sorted min insert:" << std::endl;
     insertMin();
-    printNumbers();
+    clock_t endTime = clock();
+    
+    _time_vector = static_cast<double>(endTime - startTime) / CLOCKS_PER_SEC * 1000;
+}
+
+void PmergeMe::sortWithDeque(const std::string &str) {
+    clock_t startTime = clock();
+    if (!parsInput(str))
+        return;
+    makePair();
+    findMaxOfPairs();
+    sortMaxOfPairs();
+    insertMin();
+    clock_t endTime = clock();
+    
+    _time_deque = static_cast<double>(endTime - startTime) / CLOCKS_PER_SEC * 1000;
+}
+
+
+void PmergeMe::sort(const std::string &str) {
+    sortWithVector(str);
+    sortWithDeque(str);
+    std::cout << GREEN << "Before [ " RESET;
+    std::cout << _str << GREEN << " ]" << RESET << std::endl << std::endl;
+    if (isSorted()) {
+        std::cout << BLUE << "After [ " RESET;
+        printNumbers();
+        std::cout << BLUE << " ]" << RESET << std::endl << std::endl;
+    }
+    else
+        std::cout << RED << "Not sorted!" << RESET << std::endl;
+    std::cout << "Total time to process " << _sorted_number.size() << " elements with std::vector : " << _time_vector << " us" << std::endl;
+    std::cout << "Total time to process " << _sorted_number.size() << " elements with std::deque : " << _time_deque << " us" << std::endl;
+
 }
 
 // ================================================================================= //
 // ===================================== Utils ===================================== //
 // ================================================================================= //
 
-void PmergeMe::printPairs() {
-    for (size_t i = 0; i < _pairs.size(); i++) {
-        std::cout << "  " << _pairs[i].first << " " << _pairs[i].second << std::endl;
-    }
-    if (_nb != -1)
-        std::cout << "nb: " << _nb << std::endl << std::endl;
-    else
-        std::cout << std::endl;
-}
-
 void PmergeMe::printNumbers() {
-    std::cout << "  ";
     for (size_t i = 0; i < _sorted_number.size(); i++) {
         std::cout << "" << _sorted_number[i] << " ";
     }
-    std::cout << std::endl << std::endl;
+}
+
+bool PmergeMe::isSorted() {
+    if (_sorted_number.empty()) {
+        return true;
+    }
+
+    std::vector<int>::iterator it = _sorted_number.begin();
+    std::vector<int>::iterator prev = it;
+    ++it;
+
+    while (it != _sorted_number.end()) {
+        if (*prev > *it) {
+            return false;
+        }
+        ++prev;
+        ++it;
+    }
+
+    return true;
 }

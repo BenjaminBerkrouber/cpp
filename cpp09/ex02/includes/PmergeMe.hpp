@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PmergeMe.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bberkrou <bberkrou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ben <ben@student.42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 01:43:40 by ben               #+#    #+#             */
-/*   Updated: 2024/06/25 20:47:21 by bberkrou         ###   ########.fr       */
+/*   Updated: 2024/07/06 21:34:48 by ben              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # define ORANGE "\033[33m"
 # define RESET  "\033[0m"
 # define GRAY "\033[37m"
+# define YELLOW "\033[33m"
 
 # include <unistd.h>
 # include <cstdlib>
@@ -40,6 +41,7 @@
 #include <climits>
 #include <utility>
 
+template<typename Container>
 class PmergeMe
 {
     public:
@@ -47,7 +49,7 @@ class PmergeMe
         PmergeMe();
         PmergeMe(const PmergeMe &other);
         PmergeMe &operator=(const PmergeMe &other);
-
+	
         // Destructor
         ~PmergeMe();
 
@@ -61,11 +63,13 @@ class PmergeMe
 		std::vector<int> _sorted_number;
 		int		_size_min_vector;
 
+		double 	_time_vector;
+		double 	_time_deque;
+
         bool	parsInput(const std::string &str);
 		bool	containsOnlyDigits(const std::string &str);
         
         void	makePair();
-		void	printPairs();
 		
 		void	findMaxOfPairs();
 		void	printNumbers();
@@ -74,11 +78,14 @@ class PmergeMe
 		void	recursiveSort(std::vector<int> &arr, int left, int right);
 		int		partition(std::vector<int> &arr, int left, int right);
 		
-		void	findMinOfPairs();
-
 		void	insertMin();
 		void	generateJacobsthalSeq(std::vector<size_t> &seq, size_t size);
 		void	insertInSortedOrder(int value);
+
+		bool	isSorted();
+
+		void	sortWithVector(const std::string &str);
+		void	sortWithDeque(const std::string &str);
 };
 
 #endif
